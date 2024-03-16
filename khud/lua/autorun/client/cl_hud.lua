@@ -11,41 +11,58 @@ end)
 
 hook.Add("HUDPaint", "khud", function()
     local health = LocalPlayer():Health()
+    local maxHealth = LocalPlayer():GetMaxHealth()
+    local healthPercentage = health / maxHealth
+
     local armor = LocalPlayer():Armor()
-    local energy = LocalPlayer():getDarkRPVar("Energy")
+    local maxArmor = LocalPlayer():GetMaxArmor()
+    local armorPercentage = armor / maxArmor
 
     if !LocalPlayer():Alive() then return end
 
     if not IsValid(LocalPlayer():GetActiveWeapon()) then return end
     if LocalPlayer():GetActiveWeapon():Clip1() ~= -1 then
-        draw.RoundedBox(5, ScrW() * 0.88, ScrH() * 0.93, ScrW() * 0.11, ScrH() * 0.05, Color(27, 27, 29, 230))
         draw.SimpleText(LocalPlayer():GetActiveWeapon():Clip1().. "/" ..LocalPlayer():GetAmmoCount(LocalPlayer():GetActiveWeapon():GetPrimaryAmmoType()), "DefaultHud", ScrW() * 0.95, ScrH() * 0.937, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER)
-        surface.SetDrawColor(Color(255, 255, 255, 255))
-        surface.SetMaterial(Material("materials/khud/ammo.png"))
-        surface.DrawTexturedRect(ScrW() * 0.884, ScrH() * 0.935, ScrW() * 0.03, ScrH() * 0.045)
     end
 
-    if (health > 999) then
-        health = "999+"
+    if (health >= 101) then
+        healthPercentage = 1
     end
 
-    if (armor > 999) then
-        armor = "999+"
+    if (armor >= 101) then
+        armorPercentage = 1
     end
 
-    draw.RoundedBox(5, ScrW() * -0.01, ScrH() * 0.93, ScrW() * 0.23, ScrH() * 0.08, Color(27, 27, 29, 230))
+    if not DarkRP.disabledDefaults["modules"]["hungermod"] then
+        local energy = LocalPlayer():getDarkRPVar("Energy")
+        local maxEnergy = 100
+        local energyPercentage = energy / maxEnergy
 
-    surface.SetDrawColor(Color(255, 255, 255, 255))
-    surface.SetMaterial(Material("materials/khud/health.png"))
-    surface.DrawTexturedRect(ScrW() * 0.005, ScrH() * 0.94, ScrW() * 0.03, ScrH() * 0.06)
-    draw.SimpleText(health, "DefaultHud", ScrW() * 0.04, ScrH() * 0.95, Color(255, 255, 255, 255))
-    surface.SetMaterial(Material("materials/khud/armor.png"))
-    surface.DrawTexturedRect(ScrW() * 0.08, ScrH() * 0.942, ScrW() * 0.03, ScrH() * 0.05)
-    draw.SimpleText(armor, "DefaultHud", ScrW() * 0.11, ScrH() * 0.95, Color(255, 255, 255, 255))
-    surface.SetMaterial(Material("materials/khud/food.png"))
-    surface.DrawTexturedRect(ScrW() * 0.148, ScrH() * 0.94, ScrW() * 0.033, ScrH() * 0.06)
-    draw.SimpleText(energy, "DefaultHud", ScrW() * 0.185, ScrH() * 0.95, Color(255, 255, 255, 255))
+        if (energy >= 101) then
+            energyPercentage = 1
+        end
 
+        draw.RoundedBox(0, ScrW() * 0.01, ScrH() * 0.955, ScrW() * 0.073, ScrH() * 0.015, Color(0, 0, 0, 200))
+        draw.RoundedBox(0, ScrW() * 0.0115, ScrH() * 0.958, ScrW() * 0.07, ScrH() * 0.01, Color(0, 110, 42))
+        draw.RoundedBox(0, ScrW() * 0.0115, ScrH() * 0.958, ScrW() * 0.07 * healthPercentage, ScrH() * 0.01, Color(0, 255, 106))
+
+        draw.RoundedBox(0, ScrW() * 0.085, ScrH() * 0.955, ScrW() * 0.073, ScrH() * 0.015, Color(0, 0, 0, 200))
+        draw.RoundedBox(0, ScrW() * 0.0865, ScrH() * 0.958, ScrW() * 0.07, ScrH() * 0.01, Color(0, 97, 223))
+        draw.RoundedBox(0, ScrW() * 0.0865, ScrH() * 0.958, ScrW() * 0.07 * armorPercentage, ScrH() * 0.01, Color(0, 132, 255))
+
+        draw.RoundedBox(0, ScrW() * 0.01, ScrH() * 0.975, ScrW() * 0.148, ScrH() * 0.015, Color(0, 0, 0, 200))
+        draw.RoundedBox(0, ScrW() * 0.0115, ScrH() * 0.978, ScrW() * 0.145, ScrH() * 0.01, Color(211, 172, 0))
+        draw.RoundedBox(0, ScrW() * 0.0115, ScrH() * 0.978, ScrW() * 0.145 * energyPercentage, ScrH() * 0.01, Color(255, 217, 0))
+    else
+        draw.RoundedBox(0, ScrW() * 0.01, ScrH() * 0.975, ScrW() * 0.073, ScrH() * 0.015, Color(0, 0, 0, 200))
+        draw.RoundedBox(0, ScrW() * 0.0115, ScrH() * 0.978, ScrW() * 0.07, ScrH() * 0.01, Color(0, 110, 42))
+        draw.RoundedBox(0, ScrW() * 0.0115, ScrH() * 0.978, ScrW() * 0.07 * healthPercentage, ScrH() * 0.01, Color(0, 255, 106))
+
+        draw.RoundedBox(0, ScrW() * 0.085, ScrH() * 0.975, ScrW() * 0.073, ScrH() * 0.015, Color(0, 0, 0, 200))
+        draw.RoundedBox(0, ScrW() * 0.0865, ScrH() * 0.978, ScrW() * 0.07, ScrH() * 0.01, Color(0, 97, 223))
+        draw.RoundedBox(0, ScrW() * 0.0865, ScrH() * 0.978, ScrW() * 0.07 * armorPercentage, ScrH() * 0.01, Color(0, 132, 255))
+    end
+    
 end)
 
 local HideElement = {
